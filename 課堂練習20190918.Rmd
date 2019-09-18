@@ -152,7 +152,7 @@ mutate(StuDF,
         平均成績=mean(成績),
         最高分=max(成績),
         最低分=min(成績),
-       調整後成績=成績+((最高分+最低分)/5))-> StuDF2
+       調整後成績=成績+((最高分-最低分)/5))-> StuDF2
 ```
 ##select
 
@@ -207,6 +207,95 @@ StuDF$性別=="女" # logical predicate
 logiChoose <- StuDF$性別=="女"
 StuDF[logiChoose,]
 ```
+
+```{r}
+# relational operators
+StuDF$性別=="女" 
+StuDF$成績>60
+
+# combined with logical operator
+(StuDF$性別=="女" & StuDF$成績>60) -> logiChoose2
+logiChoose2
+
+StuDF[logiChoose2,]
+```
+
+```{r}
+StuDF
+filter(StuDF,
+       性別=="女")
+filter(StuDF,
+       (性別=="女" & 成績>60))
+filter(StuDF,
+       性別=="女",
+       成績>60) # 多個AND條件可用,分隔
+```
+##Practice
+```{r}
+#1
+filter(collegeData,
+       縣市名稱=="30 臺北市")
+#2
+filter(collegeData,
+       縣市名稱=="30 臺北市"|縣市名稱=="01 新北市")
+```
+```{r}
+#2
+filter(collegeData,
+       縣市名稱 %in% c("30 臺北市","01 新北市"))
+```
+```{r}
+group_by(StuDF,
+         性別) -> StuDF_by性別
+
+# 使用grouped data frame
+summarise(StuDF_by性別,
+        平均成績=mean(成績),
+        最高分=max(成績),
+        最低分=min(成績))
+
+# 使用ungrouped data frame
+summarise(StuDF,
+        平均成績=mean(成績),
+        最高分=max(成績),
+        最低分=min(成績))
+```
+
+```{r}
+mutate(
+  StuDF_by性別,
+  最高分=max(成績),
+  最低分=min(成績),
+  調分大小=(最高分-最低分)/5,
+  調分後成績=成績+調分大小
+) -> StuDF_依性別調分
+StuDF_依性別調分
+```
+
+```{r}
+group_by(StuDF,
+         性別,
+         (成績>75)) -> StuDF_by性別成績
+StuDF_by性別成績
+summarise(StuDF_by性別成績,
+          平均成績=mean(成績),
+          人數=n())
+```
+```{r}
+ungroup(StuDF_依性別調分) -> 
+  StuDF_調分後
+  StuDF_調分後
+```
+##計算collegeData中不同縣市名稱及體系別&等級別的一年級男生及一年級女生總數（使用sum）和學校數目。
+```{r}
+group_by(collegeData,縣市名稱,體系別,等級別) -> collegeData_sort
+summarise(collegeData_sort,
+          一年級男生總數=sum(一年級男生),
+          一年級女生總數=sum(一年級女生),
+          學校數目=n()
+          )->collegeData_sorted
+```
+
 
 ```{r}
 
