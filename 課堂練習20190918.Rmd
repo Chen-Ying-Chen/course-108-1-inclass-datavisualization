@@ -298,6 +298,86 @@ summarise(collegeData_sort,
 
 
 ```{r}
+group_by(StuDF,
+         性別) -> StuDF_by性別
 
+mutate(
+  StuDF_by性別,
+  最高分=max(成績),
+  最低分=min(成績),
+  調分大小=(最高分-最低分)/5,
+  調分後成績=成績+調分大小
+) -> StuDF_依性別調分
+
+ungroup(StuDF_依性別調分) -> 
+  StuDF_調分後
+```
+
+```{r}
+# group_by(StuDF,
+#          性別) -> StuDF_by性別
+StuDF %>% group_by(
+         性別) -> StuDF_by性別
+
+# mutate(
+#   StuDF_by性別,
+#   最高分=max(成績),
+#   最低分=min(成績),
+#   調分大小=(最高分-最低分)/5,
+#   調分後成績=成績+調分大小
+# ) -> StuDF_依性別調分
+
+StuDF_by性別 %>%
+mutate(
+  最高分=max(成績),
+  最低分=min(成績),
+  調分大小=(最高分-最低分)/5,
+  調分後成績=成績+調分大小
+) -> StuDF_依性別調分
+
+
+# ungroup(StuDF_依性別調分) -> 
+#   StuDF_調分後
+StuDF_依性別調分 %>% ungroup() -> 
+  StuDF_調分後
+```
+
+
+```{r}
+StuDF %>% group_by(
+         性別)  %>%
+mutate(
+  最高分=max(成績),
+  最低分=min(成績),
+  調分大小=(最高分-最低分)/5,
+  調分後成績=成績+調分大小
+)  %>% ungroup() -> StuDF_調分後
+```
+
+
+```{r}
+StuDF %>% # 將StuDF
+  group_by(性別) %>% # 依性別分群
+  mutate( # 接著計算各群的:
+    最高分=max(成績),
+    最低分=min(成績),
+    調分大小=(最高分-最低分)/5,
+    調分後成績=成績+調分大小
+  )  %>% 
+  ungroup() -> # 接著ungroup後輸出
+  StuDF_調分後
+```
+
+```{r}
+load(url("https://www.dropbox.com/s/duh5aaqgl2f5m3z/loopTranscriptData.Rda?raw=1"))
+c('學號','學屆','學系','學年','學期','學期成績','學分數','必選修類別（必∕選∕通）') -> names(transcriptDataFinal)
+```
+計算每位學生每學年每學期的平均成績。
+```{r}
+transcriptDataFinal%>%
+  group_by(學號,學年,學期)%>%
+  summarise(
+    平均成績=sum(學期成績*學分數)/sum(學分數)
+  )
 ```
 
