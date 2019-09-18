@@ -55,17 +55,21 @@ typeof(StuDFfromList)
 length(StuDF) # 從向量角度看
 nrow(StuDF) # 從矩陣角度看```
 ```
+##dplyr
 ```{r}
 library(dplyr)
 ```
 
-
+##結構
 ```{r}
 str(StuDF)
 ```
+##前六筆資料
 ```{r}
 head(StuDF)
 ```
+
+##後六筆資料
 ```{r}
 tail(StuDF)
 ```
@@ -73,6 +77,24 @@ tail(StuDF)
 StuDF
 slice(StuDF,1:3)
 slice(StuDF,4:5)
-slice(StuDF,n())
+slice(StuDF,n()) ##n()總筆數
+```
+##最後兩筆資料
+```{r}
+slice(StuDF,(n()-1):n())
+```
+##第五到第七筆資料刪除
+```{r}
+StuDF
+slice(StuDF,-5:-7)
+slice(StuDF,-(5:7)) ##Better way 
+```
+
+```{r}
+StuDF
+slice(StuDF,c(1,4,8)) ##只要1,4,8筆資料
+```
+```{r}
+
 ```
 
