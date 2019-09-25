@@ -1,7 +1,7 @@
 ---
-title: "Untitled"
+title: "2019-09-25"
 author: "陳盈蓁"
-date: "2019/9/11"
+date: "2019/9/25"
 output: html_document
 ---
 
@@ -13,3 +13,130 @@ showtext_auto(enable=TRUE) #啟用字體
 theme_set(theme_classic())
 knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
 ```
+
+##gather 把橫向的東西壓縮成一個緃向的dataframe
+```{r}
+df_gatherExample <- data.frame(
+  country=c("A","B","C"),
+  `1999`=c("0.7k","37k","212k"),
+  `2000`=c("2k","80k","213k"),
+  check.names = F
+)
+```
+
+```{r}
+df_gatherExample
+```
+
+
+```{r}
+gather(df_gatherExample,
+       `1999`,`2000`,
+       key="年份",value="人口")
+```
+
+
+
+```{r}
+library(readr)
+collegeData <- read_csv("https://raw.githubusercontent.com/tpemartin/github-data/master/103_student.csv")
+```
+```{r}
+gather(collegeData,
+       contains("生"),
+       key="類別",value="人數") -> collegeData_gather
+
+```
+
+```{r}
+library(readr)
+df_taoyuanMarriage <- read_csv("https://data.tycg.gov.tw/opendata/datalist/datasetMeta/download?id=f95d1a33-ec56-44c5-a9ec-3afba8157e39&rid=fd2070ef-7431-4f9c-bc3a-82d7bfbcd2fb")
+```
+##gather
+```{r}
+df_taoyuanMarriage%>%
+gather(
+       ends_with("月"),
+       key="月份",value="對數"
+      )%>%group_by(月份)%>%
+  summarise(總結婚對數=sum(對數))
+
+```
+```{r}
+df_taoyuanMarriage%>%
+gather(
+       ends_with("月"),
+       key="月份",value="對數"
+      )%>%group_by(月份區域別)%>%summarise(結婚最高峰月份=月份[[which.max(對數)]])
+```
+
+##spread
+```{r}
+df_spreadExample <- data.frame(
+  id = c(1,1,1,2,2,2),
+  var = c("花朶萼片長度", "學名", "總類數"),
+  value = c(5.1, "setosa", 1, 
+            7.0, "versicolor", 2))
+```
+
+
+```{r}
+df_spreadExample
+spread(df_spreadExample,
+       var,value)
+```
+```{r}
+collegeData_gather %>%
+  spread(
+    類別,人數
+  )
+```
+
+```{r}
+df_twbankExchangeRate <- read_csv("http://www.bot.com.tw/Govinfo/opendata/csv/151/20180101-20181231-FXCRT.csv")
+```
+```{r}
+df_twbankExchangeRate%>%
+  select(-即期賣出匯率)%>%
+  spread(
+    幣別,即期買入匯率)
+```
+##變數調整(mutate/as.factor/as.numeric/lubridate)
+```{r}
+df_twbankExchangeRate%>%
+  mutate(
+    幣別=as.factor(幣別),
+    即期買入匯率=as.numeric(即期買入匯率),
+    即期賣出匯率=as.numeric(即期賣出匯率),
+    日期=ymd(日期)
+  )->df_twbankExchangeRate
+df_twbankExchangeRate
+
+```
+##data import
+```{r}
+library(readr); library(dplyr)
+# 線上引入原始資料成字串向量
+read_lines("http://www.taifex.com.tw/data_gov/taifex_open_data.asp?data_name=DailyForeignExchangeRates") ->
+  originalLines
+
+# 將字串由CP950編碼改成UTF8再讀成data frame data2
+originalLines %>%
+  iconv(from="CP950",to="UTF8") %>% 
+  read_csv() -> data2
+```
+
+```{r}
+data2%>%
+  mutate(
+  日期=ymd(日期)
+    ) ->data2
+data2
+```
+
+```{r}
+iconvlist()
+
+
+```
+
