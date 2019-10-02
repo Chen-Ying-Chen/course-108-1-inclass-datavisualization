@@ -133,10 +133,124 @@ data2%>%
     ) ->data2
 data2
 ```
+##繪圖
+```{r}
+library(readr)
+subsetDataTWbank <- read_csv("https://www.dropbox.com/s/t8ulj3d7cgl8jh5/subsetDataTWbank.csv?dl=1")
+```
+
+##ggplot
+```{r}
+library(ggplot2)
+ggplot(subsetDataTWbank)+
+  geom_line(
+    aes(x=西元年月,y=`定存利率-一個月-固定`)
+  )
+```
 
 ```{r}
-iconvlist()
+library(ggplot2)
+subsetDataTWbank%>%
+  ggplot()+
+  geom_point(
+    aes(x=西元年月,y=`定存利率-一個月-固定`)
+  )
+```
 
+```{r}
+library(ggplot2)
+ggplot(subsetDataTWbank)+
+  geom_line(
+    aes(x=西元年月,y=`定存利率-一個月-固定`)
+  )+
+  geom_point(
+    aes(x=西元年月,y=`定存利率-一個月-固定`)
+  )
+```
+
+```{r}
+subsetDataTWbank %>%
+  gather(
+    `定存利率-一個月-固定`,`定存利率-二年期-固定`,`定存利率-三年期-固定`,
+    key = "定存類型", value = "利率"
+  ) %>%
+  ggplot() +
+  geom_boxplot(
+    aes(x=定存類型,y=利率,color=西元年月)
+  )
+```
+
+```{r}
+subsetDataTWbank %>%
+  gather(
+    `定存利率-一個月-固定`,`定存利率-二年期-固定`,`定存利率-三年期-固定`,
+    key = "定存類型", value = "利率"
+  )  -> subsetDataTWbank_gather 
+subsetDataTWbank_gather %>%
+  ggplot()+
+  geom_line(
+    aes(x=西元年月,y=利率,color="西元年月")
+  )
+```
+
+```{r}
+subsetDataTWbank_gather$定存類型 %>% 
+  as.factor %>% levels
+```
+
+```{r}
+subsetDataTWbank_gather %>%
+  mutate(
+    定存類型=factor(定存類型,levels=c("定存利率-一個月-固定","定存利率-二年期-固定","定存利率-三年期-固定"))
+  ) -> subsetDataTWbank_gather
+```
+
+
+```{r}
+subsetDataTWbank_gather %>%
+  ggplot()+
+  geom_boxplot(aes(x=定存類型,y=利率))
+```
+
+```{r}
+twCalendar <- c("民國88年11月1日","民國88年12月1日","民國89年1月1日")
+twCalendar %>%
+  # 取出字串中的數字部份
+  stringr::str_extract_all("[:digit:]+") %>%
+  # 將每個日期的「年」數字加上1911再合併年月日成為`yyyy-mm-dd`格式
+  purrr::map_chr(
+             function(x) {
+               x1=as.integer(x[[1]])+1911
+               x[[1]]=as.character(x1)
+               stringr::str_c(x,collapse="-")
+             }
+             ) -> westernCalendar
+```
+
+```{r}
+westernCalendar %>%
+  lubridate::ymd() -> datetimeCalendar
+class(datetimeCalendar)
+```
+
+```{r}
+subsetDataTWbank %>%
+  mutate(
+    年月=年月 %>%
+      stringr::str_extract_all("[:digit:]+") %>%
+      purrr::map_chr(
+                 function(x) {
+                   x1=as.integer(x[[1]])+1911
+                   x[[1]]=as.character(x1)
+                                stringr::str_c(x,collapse="-")
+                 }
+                 ),
+    年月日=stringr::str_c(年月,"01",sep="-"),
+    西元年月日=lubridate::ymd(年月日)
+  )
+```
+
+```{r}
 
 ```
 
