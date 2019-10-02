@@ -133,6 +133,7 @@ data2%>%
     ) ->data2
 data2
 ```
+
 ##繪圖
 ```{r}
 library(readr)
