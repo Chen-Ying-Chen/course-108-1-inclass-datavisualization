@@ -121,6 +121,15 @@ df_example %>%
     aes(x=x2,y=y,color="z1")
   ) -> basicScatterPlot
 basicScatterPlot+
-  scale_color_discrete_sequential(palette = "myPalette11")
+```
+
+
+```{r}
+scale_color_discrete_sequential(palette = "myPalette11")
+```
+
+```{r}
+iris
+rename(iris, petal_length = Petal.Length)
 ```
 
