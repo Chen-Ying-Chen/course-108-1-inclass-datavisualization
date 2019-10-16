@@ -1,0 +1,78 @@
+---
+title: "每週一圖作業"
+output: html_document
+params:
+  組員: ["陳盈蓁"]  
+  學號: ["410573076"]
+---
+
+#### 環境設定
+
+以下為老師執行時一定會存在的環境設定
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(wildcard)
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+```
+
+#### 資料處理
+
+此部份在做：
+
+  * 原始Rda資料引入（即引入**dataList**物件）；
+  
+  * 資料清理成作圖用graphData物件。
+
+請將你最原始的資料連同作業一起上傳到作業上傳網址：  
+  * 若「原始資料為網頁下載」，且下載指令寫在data cleaning chunk裡的話，可以不用上傳「資料」。  
+  * 若原始資料有很多個檔案，請先引入成data frame並存在「一個」.Rda檔裡上傳（如`example_data.Rda`檔）。  
+
+資料檔引入到進入作圖前的資料處理請寫在下面區塊，分二部份：
+
+  * 資料處理  
+  * 作圖用資料物件生成(最後形成作圖資料物件graphData)
+  
+```{r data cleaning, echo=TRUE, eval=T}
+library(readr)
+economic_freedom_index2019_data <- read.csv("~/Downloads/economic_freedom_index2019_data.csv", header=FALSE)
+save(economic_freedom_index2019_data, file="uploadfile.Rda")
+load("uploadfile.Rda")
+ddf <- subset(economic_freedom_index2019_data[c("V25","V17","V7")])
+names(ddf)<-c("Country","Trade Freedom","score")
+ddf<-ddf[-1,]
+ddf$score<-as.numeric(levels(ddf$score)[ddf$score])
+ddf->graphData
+```
+
+#### 繪圖程式
+
+```{r graph, echo=T, eval=T}
+world <- map_data('world')
+world <- world %>% filter(region != "Antarctica")
+graphData %>%
+  ggplot()+
+  geom_map(data=world, map=world,
+                  aes(x=long, y=lat, group=group, map_id=region),
+                  fill="white", colour="black") + 
+  geom_map(data=graphData, map=world,
+                  aes(fill=score, map_id=Country),
+                  colour="black") + 
+  scale_fill_continuous(high = "yellow",low = "blue",
+                               guide="colorbar") + 
+  labs(title ="Economic Freedom Score in 2019") ->finalplot
+finalplot
+```
+
+#### 設計說明
+說明想傳達的訊息（必要）及設計想法（非必要）。寫在***之後
+*** 
+此為西元2019年的經濟自由度指數地圖，希望透過此圖讓大家能一目瞭然世界各國的經濟自由度指數，
+以及能直接看到各區域經濟自由度高低趨勢。
+
+```{r}
+finalplot %>%
+  ggplotly()
+```
