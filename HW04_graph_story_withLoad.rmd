@@ -1,0 +1,66 @@
+---
+title: "每週一圖作業繪圖說明檔"
+output: html_document
+params:
+  組員: ["陳盈蓁"]  
+  學號: ["410573076"]
+---
+
+#### 環境設定
+
+以下為老師執行時一定會存在的環境設定
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+rm(list=ls())
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(colorspace); library(grDevices); library(shiny); library(shinyjs); library(scales)
+library(tidyr); library(showtext); library(tidyverse); library(colorspace)
+
+#font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(fig.align='center', fig.showtext=T)
+```
+
+
+#### 繪圖程式
+
+```{r graph, echo=T, eval=T}
+# load("graphData.Rda") # 此行為第一行
+load("graphData.Rda")
+graph<-
+  ggplot(graphData,aes(x=年,y=比率))+
+  geom_line(aes(linetype=最高學歷,color=最高學歷,size=最高學歷))+
+  theme(legend.position = "none")+
+  annotate("text", x = 2016, y = 31.5, 
+           label = paste("國中"), size = 3)+
+  annotate("text", x = 2016, y = 17, 
+           label = paste("高中、職"), size = 3) +
+  annotate("text", x = 2016, y=  12, 
+           label = paste("專科"), size = 3) +
+  annotate("text", x = 2016, y = 8.7, 
+           label = paste("小學或以下"), size = 3) +
+  annotate("text", x = 2016, y = 5.3, 
+           label = paste("大學"), size = 3)+
+  annotate("text", x = 2015.7, y = 3.4, 
+           label = paste("研究所及以上"), size = 3)+
+  labs(title = "2004至2016年每日抽菸率（以教育程度劃分）",
+       caption = "資料來源: 臺灣政府資料開放平臺")
+graph <-graph+scale_color_manual(values=c("#993300", "#CC9933","#CC6600","#CC9966","#FFCC99","#FFCC66"))
+graph <-graph+scale_size_manual(values = c(1.9,0.4,1.2,0.9,0.5,1))
+graph
+
+```
+
+#### 設計說明
+說明想傳達的訊息（必要）及設計想法（非必要）。寫在***下一行。
+
+*** 
+欲傳達訊息：
+各教育程度的2004年到2016年的每日抽驗率分佈
+
+設計想法：
+為了能讓讀者直接理解，我將各條線表達的教育程度放至其線旁邊，
+另外，希望透過顏色使讀者直接聯想到抽煙、吸菸，
+特別選用咖啡色，並由深至淺排列，也將線依其比率大小調整，
+企圖讓讀者可以藉由線的面積大小來感受其比率的差異。
+
+

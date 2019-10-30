@@ -253,6 +253,24 @@ graphList$demand_supply+
 ```
 
 ```{r}
+graphList$demand_supply+
+  geom_ribbon(
+    data=data.frame(
+      x=seq(0.25,0.5,by=0.01)
+    ),
+    aes(y=x),
+    stat="summary", 
+    fun.ymin= function(y) market_demand(y),
+    fun.ymax= function(y) market_supply(y),
+    alpha=0.3
+  )
+```
 
+```{r}
+df0 <-
+  data.frame(
+    x=seq(0.25,0.5,by=0.01),
+    y=seq(0.25,0.5,by=0.01)
+  )
 ```
 
