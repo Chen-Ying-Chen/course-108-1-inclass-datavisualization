@@ -1,0 +1,34 @@
+---
+title: "每週一圖作業資料檔"
+output: html_document
+params:
+  組員: ["陳盈蓁"]  
+  學號: ["410573076"]
+---
+
+#### 環境設定
+
+以下為老師執行時一定會存在的環境設定
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+rm(list=ls())
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(colorspace); library(grDevices); library(shiny); library(shinyjs); library(scales)
+library(tidyr); library(showtext); library(tidyverse); library(colorspace)
+
+#font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(fig.align='center', fig.showtext=T)
+```
+
+#### 資料處理
+  
+```{r data cleaning, echo=TRUE, eval=T}
+graphData<-list()
+graphData$修課年級<-c("大一","大一","大一","大一","大一","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大三","大三","大三","大三","大三","大三","大三","大三","大四上","大四上","大四上")
+graphData$課程類別<-c("語文","語文","人文思考","政治社會","人文思考","語文","財金管理","政治社會","政治社會","財金管理","政治社會","政治社會","人文思考","人文思考","人文思考","人文思考","人文思考","數理邏輯","程式科技","程式科技","人文思考","數理邏輯","人文思考","程式科技","人文思考","數理邏輯","數理邏輯","程式科技")
+graphData <- as.data.frame(graphData)
+save(graphData,file="graphData.Rda")
+
+# save(<所有在graph_story.Rmd要用的物件列出來，中間用逗號分隔>, file="graphData.Rda") # 此行放在最後一行
+```
+

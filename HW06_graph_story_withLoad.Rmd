@@ -1,0 +1,76 @@
+---
+title: "每週一圖作業繪圖說明檔"
+output: html_document
+params:
+  組員: ["陳盈蓁"]  
+  學號: ["410573076"]
+---
+
+#### 環境設定
+
+以下為老師執行時一定會存在的環境設定
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+rm(list=ls())
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(colorspace); library(grDevices); library(shiny); library(shinyjs); library(scales)
+library(tidyr); library(showtext); library(tidyverse); library(colorspace);library(wesanderson);library(RColorBrewer);library(treemap)
+
+
+#font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(fig.align='center', fig.showtext=T)
+```
+
+
+#### 繪圖程式
+theme_void() + theme(legend.position="none")
+```{r graph, echo=T, eval=T}
+# load("graphData.Rda") # 此行為第一行
+load("graphData.Rda")
+ 
+graphData%>%
+  ggplot()+
+  geom_bar(aes(x=技能,y=比例,fill=技能,label=技能),stat="identity",width = 0.9)+
+  scale_fill_manual(values=c("#CCCC99","#FFCC99","#CCFF99","#FFFFCC","#FFFF99","#CCFFCC") )+geom_text(aes(x=技能,y = c(5,3,3.5,5,3.3,2.5),label=技能),size=3.2)+
+    annotate("text", x = 1, y = 2, 
+           label = paste("郵政反洗黑錢系統"), size = 3,angle=40,colour="white")+
+    annotate("text", x = 1.2, y = 2, 
+           label = paste("中信資料庫升級"), size = 3,angle=40,colour="white")+
+    labs(title="William Liu's resume",
+       subtitle = "Data Engineer / BackendEngineer")+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+        axis.line.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.title.y=element_blank(),
+        axis.ticks.y=element_blank(),
+      legend.position = "none")+
+  coord_polar()  +
+  theme(panel.background = element_rect(colour= "#99CCCC",size=4,linetype="solid"),
+        panel.grid.major=element_line(colour='grey',linetype="dashed"))+
+  annotate("text", x = 2, y = -2, 
+           label = paste("資策會/自學"), size = 3.6,colour="#663333")
+
+```
+
+
+#### 設計說明
+說明想傳達的訊息（必要）及設計想法（非必要）。寫在***下一行。
+
+*** 
+原履歷：https://www.cakeresume.com/resumes/willy11342002
+
+欲傳達訊息：
+
+履歷所有者(以下稱作者)在他的履歷上展列出他在設計、軟體工程各個領域有著多樣化的經驗，
+所以透過此圖能看得出作者的跨領域能力，以及其應用深淺。
+因為有標明他現在是後端工程師，所以將他後端的作品標在圖上，讓讀者可以知道他於後端的作品。
+
+設計想法：
+
+作者並非本科出身，他是透過資策會的課程和自學而習得程式能力，所以我在其源頭標在中間，
+從圓心(資策會/自學)向外發展出多方面的程式應用能力，
+另外因為不想讓讀者感覺到其有相關性，所以挑選不同的顏色，但作者在後端和網路爬蟲在原履歷中提到的經驗和應用的較多，所以有按原履歷提到的比例分配面積，讓讀者可以一眼知道有跨領域能力但後端和網路爬蟲較為熟練。
+

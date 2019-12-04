@@ -1,0 +1,81 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard);
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext); library(colorspace); library(scales); library(magick); library(sf); library(rmapshaper); library(osmdata)
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+graphData<-list()
+graphData$修課年級<-c("大一","大一","大一","大一","大一","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大三","大三","大三","大三","大三","大三","大三","大三","大四上","大四上","大四上")
+graphData$課程類別<-c("語文","語文","人文思考","政治社會","人文思考","語文","財金管理","政治社會","政治社會","財金管理","政治社會","政治社會","人文思考","人文思考","人文思考","人文思考","人文思考","數理邏輯","程式科技","程式科技","人文思考","數理邏輯","人文思考","程式科技","人文思考","數理邏輯","數理邏輯","程式科技")
+graphData <- as.data.frame(graphData)
+save(graphData,file="graphData.Rda")
+
+# load("graphData.Rda") # 此行為第一行
+load("graphData.Rda")
+graphData%>%
+  ggplot(aes(x=factor(修課年級,level=c("大一","大二","大三","大四上"))))+
+  geom_bar(aes(fill=課程類別))+
+  scale_fill_manual(values=c("#F3DF6C", "#78B7C5", "#D3DDDC", "#C7B19C","#CC6666","#D67236"))+
+  labs(y="課程數",
+         title="大學自選課程地圖",
+       subtitle = "外系選修、系上選修、通識")+
+  annotate("text", x = 1, y = -0.5, 
+           label = paste("大一"), size = 3)+
+  annotate("text", x = 2, y = -0.5, 
+           label = paste("大二"), size = 3)+
+  annotate("text", x = 3, y = -0.5, 
+           label = paste("大三"), size = 3)+
+  annotate("text", x = 4, y = -0.5, 
+           label = paste("大四上"), size = 3)+
+  annotate("text", x = 2, y = 2, 
+           label = paste("政治社會"), size = 3)+
+  annotate("text", x = 2, y = 4.5, 
+           label = paste("語文"), size = 3)+
+  annotate("text", x = 2, y = 7.5, 
+           label = paste("人文思考"), size = 3)+
+  annotate("text", x = 2, y = 11, 
+           label = paste("財金管理"), size = 3)+
+  annotate("text", x = 3, y = 1, 
+           label = paste("數理邏輯"), size = 3)+
+  annotate("text", x = 3, y = 6.5, 
+           label = paste("程式科技"), size = 3)+
+theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+      legend.position = "none")->finalplot
+finalplot
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+
+```
+
+### Chart C
+
+```{r}
+
+```
+

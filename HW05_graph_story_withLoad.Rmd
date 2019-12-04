@@ -1,0 +1,117 @@
+---
+title: "每週一圖作業繪圖說明檔"
+output: html_document
+params:
+  組員: ["陳盈蓁"]  
+  學號: ["410573076"]
+---
+
+#### 環境設定
+
+以下為老師執行時一定會存在的環境設定
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+rm(list=ls())
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(colorspace); library(grDevices); library(shiny); library(shinyjs); library(scales)
+library(tidyr); library(showtext); library(tidyverse); library(colorspace);library(wesanderson)
+
+
+#font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(fig.align='center', fig.showtext=T)
+```
+
+
+#### 繪圖程式
+theme_void() + theme(legend.position="none")
+```{r graph, echo=T, eval=T}
+# load("graphData.Rda") # 此行為第一行
+load("graphData.Rda")
+graphData%>%
+  ggplot(aes(x=factor(修課年級,level=c("大一","大二","大三","大四上"))))+
+  geom_bar(aes(fill=課程類別))+
+  scale_fill_manual(values=c("#F3DF6C", "#78B7C5", "#D3DDDC", "#C7B19C","#CC6666","#D67236"))+
+  labs(y="課程數",
+         title="大學自選課程地圖",
+       subtitle = "外系選修、系上選修、通識")+
+  annotate("text", x = 1, y = -0.5, 
+           label = paste("大一"), size = 3)+
+  annotate("text", x = 2, y = -0.5, 
+           label = paste("大二"), size = 3)+
+  annotate("text", x = 3, y = -0.5, 
+           label = paste("大三"), size = 3)+
+  annotate("text", x = 4, y = -0.5, 
+           label = paste("大四上"), size = 3)+
+  annotate("text", x = 2, y = 2, 
+           label = paste("政治社會"), size = 3)+
+  annotate("text", x = 2, y = 4.5, 
+           label = paste("語文"), size = 3)+
+  annotate("text", x = 2, y = 7.5, 
+           label = paste("人文思考"), size = 3)+
+  annotate("text", x = 2, y = 11, 
+           label = paste("財金管理"), size = 3)+
+  annotate("text", x = 3, y = 1, 
+           label = paste("數理邏輯"), size = 3)+
+  annotate("text", x = 3, y = 6.5, 
+           label = paste("程式科技"), size = 3)+
+theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+      legend.position = "none")->finalplot
+finalplot
+
+```
+
+```{r}
+load("graphData.Rda")
+## ----graph, echo=T, eval=T-----------------------------------------------
+graphData%>%
+  ggplot(aes(x=factor(修課年級,level=c("大一","大二","大三","大四上"))))+
+  geom_bar(aes(fill=課程類別))+
+  scale_fill_manual(values=c("#F3DF6C", "#78B7C5", "#D3DDDC", "#C7B19C","#CC6666","#D67236"))+
+  labs(y="課程數",
+         title="大學自選課程地圖",
+       subtitle = "外系選修、系上選修、通識")+
+  annotate("text", x = 1, y = -0.5, 
+           label = paste("大一"), size = 3)+
+  annotate("text", x = 2, y = -0.5, 
+           label = paste("大二"), size = 3)+
+  annotate("text", x = 3, y = -0.5, 
+           label = paste("大三"), size = 3)+
+  annotate("text", x = 4, y = -0.5, 
+           label = paste("大四上"), size = 3)+
+  annotate("text", x = 2, y = 2, 
+           label = paste("政治社會"), size = 3)+
+  annotate("text", x = 2, y = 4.5, 
+           label = paste("語文"), size = 3)+
+  annotate("text", x = 2, y = 7.5, 
+           label = paste("人文思考"), size = 3)+
+  annotate("text", x = 2, y = 11, 
+           label = paste("財金管理"), size = 3)+
+  annotate("text", x = 3, y = 1, 
+           label = paste("數理邏輯"), size = 3)+
+  annotate("text", x = 3, y = 6.5, 
+           label = paste("程式科技"), size = 3)+
+theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+      legend.position = "none")->finalplot
+finalplot
+```
+
+#### 設計說明
+說明想傳達的訊息（必要）及設計想法（非必要）。寫在***下一行。
+
+*** 
+欲傳達訊息：
+
+想透過圖展現我大學四年除去必修後的自選課程地圖，
+可看出人文思考的課程在我的大學階段所佔比重較大，
+大一、大二多關注公共議題，也同時增進自己的語文能力，
+在大三大四時多建立數學基礎和程式能力。
+
+設計想法：
+為了讓能大家一眼辨別各個分類的課程，花了不少的時間在配色，
+另外，因為在每個色塊上都放文字容易使圖變得複雜，所以只在各色其中一塊放置文字說明。
