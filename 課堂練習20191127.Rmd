@@ -1,0 +1,283 @@
+---
+title: "課堂練習20191127"
+author: "陳盈蓁"
+date: "2019/9/11"
+output: html_document
+---
+
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf)
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+```
+
+
+```{r}
+library(osmdata)
+```
+
+```{r}
+
+st_read("map .osm",layer="lines") -> sf_ntpu_lines
+st_read("map .osm",layer="points") -> sf_ntpu_points
+st_read("map .osm",layer="multipolygons") -> sf_ntpu_multipolygons
+```
+
+```{r}
+sf_ntpu_points %>% View("points")
+sf_ntpu_lines %>% View("lines")
+sf_ntpu_multipolygons %>% View("multipolys")
+
+```
+
+```{r}
+sf_ntpu_lines %>%
+  ggplot()+geom_sf()+
+  geom_sf(
+    data=sf_ntpu_multipolygons %>%
+      filter(
+        name=="八二三紀念公園(4號公園)"
+      ),
+    fill="darkolivegreen1"
+  )+
+  geom_sf_label(
+    data=sf_ntpu_multipolygons %>%
+      filter(
+        name=="八二三紀念公園(4號公園)"
+      ),
+    aes(label=name), nudge_y = 0.001
+    )+
+  coord_sf(
+    xlim=c(121.50939,121.51523),
+    ylim=c(25.00082,25.00377)
+  )
+```
+##bbox
+```{r}
+library(osmdata)
+# open pass query with bounding box
+load(url("https://www.dropbox.com/s/uvco1te2kbs6o01/MRT_Taipei.Rda?dl=1"))
+bbox_taipei <- opq(
+  bbox = c(121.4616,25.1050,121.6058,24.9894) 
+) 
+```
+
+```{r}
+bbox_taipei %>% 
+  add_osm_feature(
+    key="railway", value="subway"
+  ) %>%
+  osmdata_sf() -> map_taipei_subway
+
+map_taipei_subway
+```
+```{r}
+map_taipei_subway$osm_lines %>% View
+```
+
+```{r}
+map_taipei_subway$osm_lines %>%
+  mutate(
+    length=st_length(geometry),
+    shortname=str_replace(name,"捷運","") %>%
+      str_extract("[:graph:]+(?=線)")
+  ) -> sf_tpe_mrt
+```
+
+```{r}
+sf_tpe_mrt %>%
+  filter(
+    shortname=="板南"
+  ) %>%
+  st_geometry() -> sfc_BL
+sfc_BL %>% st_union() %>%
+  ggplot()+geom_sf()
+```
+
+```{r}
+sf_tpe_mrt %>%
+group_by(
+    shortname
+  ) %>%
+  summarise(
+    geometry=st_union(geometry)
+  ) %>%
+  ungroup() %>%
+  na.omit() -> sf_tpe_mrt
+
+
+sf_tpe_mrt %>%
+  ggplot()+geom_sf(
+    aes(color=shortname, fill=shortname), size=1
+  ) +
+  geom_sf_text(
+    aes(label=shortname)
+  )+
+  labs(title="台北捷運路線圖")
+```
+
+```{r}
+bbox_taipei %>%
+  add_osm_feature(
+    key="admin_level", value="5"
+  ) %>%
+  osmdata_sf() -> map_taipei_boundary
+
+map_taipei_boundary  
+```
+
+```{r}
+map_taipei_boundary$osm_multipolygons -> map_taipei
+```
+
+##osm資料對於每一個feature的geometry元素皆有命名，且此名稱是所有geometry feature代碼的串接，因此名稱會太長，超過R內定可容忍長度，而產生如下Error:
+Error in do.call(rbind, x) : 變數名稱受限為 10000 位元組
+```{r}
+map_taipei %>%
+  ggplot()+
+  geom_sf()
+```
+
+##以簡單數字命名
+```{r}
+map_taipei %>%
+  st_geometry() -> sfc_map_taipei
+for(i in seq_along(sfc_map_taipei)){
+  names(sfc_map_taipei[[i]][[1]]) <-
+    1:length(names(sfc_map_taipei[[i]][[1]]))
+}
+
+map_taipei %>%
+  st_set_geometry(
+    sfc_map_taipei
+  ) -> map_taipei2
+```
+
+
+```{r}
+map_taipei2 %>%
+  ggplot()+
+  geom_sf()
+```
+
+##osm_geom_rename
+```{r}
+osm_geom_rename <- function(sf_object){
+  sf_object %>%
+    st_geometry() -> sfc_sf_object
+  for(i in seq_along(sfc_sf_object)){
+    names(sfc_sf_object[[i]][[1]]) <-
+      1:length(names(sfc_sf_object[[i]][[1]]))
+  }
+  
+  sf_object %>%
+    st_set_geometry(
+      sfc_sf_object
+    ) -> sf_object2
+  return(sf_object2)
+}
+```
+
+```{r}
+source("https://www.dropbox.com/s/8ndtvzqbdb4cb93/data_visulaization_pk.R?dl=1")
+
+```
+
+```{r}
+map_taipei %>%
+  osm_geom_rename() %>%
+  ggplot()+
+  geom_sf()+
+  geom_sf_text(
+    aes(label=name), size=5/.pt
+  )+
+  geom_sf(
+    data=sf_tpe_mrt, 
+    aes(color=shortname, fill=shortname),
+    size=0.5
+  )
+```
+
+##雙軸設定
+```{r}
+billionaire <- 
+  read_csv("https://www.dropbox.com/s/cpu4f09x3j78wqi/billionaire.csv?dl=1") %>%
+  rename(
+    "Year"="X1"
+  )
+```
+
+
+```{r}
+billionaire %>%
+  ggplot()+geom_line(
+    aes(x=Year,y=Russia)
+  ) +
+  scale_y_continuous(
+    breaks=seq(0,200,by=50)
+  ) +
+  theme_linedraw()-> plot_russia
+
+billionaire %>%
+  ggplot()+geom_line(
+    aes(x=Year,y=World)
+  )+
+  scale_y_continuous(
+    breaks=seq(0,2000,by=500)
+  ) +
+  theme_linedraw()-> plot_world
+```
+
+
+```{r}
+f <- function(x) x/10
+f_inverse <- function(f_value) 10*f_value
+```
+
+```{r}
+billionaire %>%
+  mutate(
+    World2=f(World)
+  ) -> billionaire
+```
+
+
+```{r}
+billionaire %>%
+  ggplot()+
+  geom_line(
+    aes(x=Year,y=Russia), color="blue", size=2
+  ) +
+  geom_line(
+    aes(x=Year,y=World2), color="brown", size=2
+  ) + 
+  scale_y_continuous(
+    limits=c(-1,230),
+    breaks=seq(0,200,by=50),
+    expand=expand_scale(mult=c(0,0)),
+    sec.axis = sec_axis(  # 設定右Y軸
+      trans=f_inverse,
+      name="Rest of the World"
+    )
+  ) +
+  theme_bw() -> plot_sec_axis 
+
+plot_sec_axis
+```
+
+```{r}
+# 引入theme_dual_axis()
+source("https://www.dropbox.com/s/8sdedu4wnq8wsns/guides.R?dl=1")
+
+plot_sec_axis +
+  scale_x_continuous(
+    limits=c(1995,2015),
+    breaks=c(1996,seq(2000,2015,by=5)),
+    labels=function(x) ifelse(x<=2000,x,str_sub(as.character(x),3,4))
+  )+
+  labs(x="",y="Russia")+
+  theme_dual_axis()
+```
+

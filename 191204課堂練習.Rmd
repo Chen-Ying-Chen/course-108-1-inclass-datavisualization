@@ -1,0 +1,109 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+rm(list=ls())
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(colorspace); library(grDevices); library(shiny); library(shinyjs); library(scales)
+library(tidyr); library(showtext); library(tidyverse); library(colorspace);library(wesanderson)
+
+
+#font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(fig.align='center', fig.showtext=T)
+```
+
+
+```{r}
+load(url("https://www.dropbox.com/s/r21jg0vxf77geu9/plot_tree.Rda?dl=1"))
+
+plot_tree
+```
+
+```{r}
+file.create(".Rprofile")
+file.edit(".Rprofile") 
+```
+```{r}
+source("https://www.dropbox.com/s/wlv1ssxqq6n4p7u/gg_hw5_004.R?dl=1")
+gg_hw5_004 %>%
+  ggplotly() ->
+  pltly_hw5_004
+```
+
+
+
+```{r}
+api_create(pltly_hw5_004,filename="pltly_hw5_004",fileopt="overwrite") -> Meta_pltly_hw5_004
+Meta_pltly_hw5_004
+```
+```{r}
+pltly_hw5_004_v1 <- api_download_plot("1","CYC")
+pltly_hw5_004_v1
+```
+
+```{r}
+save(pltly_hw5_004_v1,file="pltly_hw5_004_v1.Rda")
+```
+
+#Hover
+```{r}
+p <- ggplot(mtcars, aes(x = wt, y = mpg)) +
+   geom_point() + geom_smooth()
+pltly_p0 <- ggplotly(p)
+```
+
+```{r}
+pltly_p0%>%plotly_json()
+```
+```{r}
+pltly_p <- 
+  pltly_p0 %>% 
+  style(
+    traces=2:3,
+    hoverinfo = "none" ### 不顯示
+    ) 
+
+pltly_p %>% layout(
+  title="hovertext='none' on traces 2-3"
+)
+```
+
+```{r}
+pltly_p0 %>% 
+  style(
+    traces=1,
+    hoverinfo="x") %>% ### 顯示x座標
+  layout(
+    title="hoverinfo='x'"
+  )
+```
+
+```{r}
+pltly_p0 %>% 
+  style(
+    traces=1,
+    hoverinfo="x+y") %>% ### 顯示x,y座標
+  layout(
+    title="hoverinfo='x+y'"
+  )
+```
+
+
+```{r}
+pltly_p <-    
+  pltly_p0 %>% 
+  style(
+    traces=1,
+    hovertext=mtcars %>% rownames)  ### hover內容設定
+
+pltly_p %>%
+  layout(title="hovertext=<指定字串> on traces 1")
+```
+
+```{r}
+
+```
+

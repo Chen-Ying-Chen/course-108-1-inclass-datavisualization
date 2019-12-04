@@ -150,6 +150,82 @@ graphList$圖書_ggplotOnly_with_aes2 +
     aes(y=count), width=0.7, position="stack"
   )
 ```
+##Chapter5  geom_line/geom_path
+```{r}
+df0 <- data.frame(
+  x=c(1,2,1,3,2),
+  y=c(2,3,1,2,4),
+  label=c("a","b","c","d","e")
+)
+df0 %>%
+  ggplot(aes(x=x,y=y))+
+  geom_label(
+    aes(label=label), fill="pink"
+    )-> plotbase0
+
+list_graphs <- list()
+
+plotbase0+geom_line()+labs(title="geom_line") -> 
+  list_graphs$geom_line
+
+plotbase0+geom_path()+labs(title="geom_path") -> 
+  list_graphs$geom_path
+
+ggpubr::ggarrange(
+  list_graphs$geom_line, list_graphs$geom_path
+)
+
+```
+```{r}
+ggplot()+theme_linedraw()+
+  scale_x_continuous(limits=c(0,6),breaks=0:6,
+                     expand=expand_scale(add=c(0,0)))+
+  scale_y_continuous(limits=c(0,6),breaks=0:6,
+                     expand=expand_scale(mult = c(0,0))) ->
+  myGrids
+
+myGrids
+```
+
+```{r}
+list_geometryData <- list()
+list_geometryData$points <- 
+  rbind(
+    c(1,5),
+    c(2,1),
+    c(5,1),
+    c(5,5)) 
+```
+
+```{r}
+list_geometryData$points %>%
+  as.data.frame() 
+```
+
+```{r}
+myGrids +
+  geom_point(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$point
+
+myGrids +
+  geom_path(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$path
+
+myGrids +
+  geom_polygon(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$polygon
+
+ggpubr::ggarrange(
+  list_graphs$point, list_graphs$path, list_graphs$polygon,
+  ncol=3
+)
+```
 
 ```{r}
 
