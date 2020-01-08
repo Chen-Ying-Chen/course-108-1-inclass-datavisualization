@@ -1,39 +1,31 @@
 ---
-title: "R Notebook"
-output: html_notebook
+title: "經濟學人一週大事_政治篇"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Cmd+Shift+Enter*. 
-```{r basic setup, message=FALSE, echo=TRUE, eval=T}
-library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf);library(maps)
-
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf);library(maps);library(plotly);library(rmapshaper);library(leaflet);library(osmdata);library(magick);library(scales);library(rvest)
 font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
 showtext_auto(enable=TRUE) #啟用字體
 theme_set(theme_classic())
-knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+knitr::opts_chunk$set(fig.align='center', echo=FALSE, fig.showtext=T)
+
 ```
 
+Column {data-width=650}
+-----------------------------------------------------------------------
 
-
+### Worldmap
+<div id=Worldmap>
 ```{r}
-install.packages(c("rvest","XML","xml2"))
-```
-
-```{r}
-library(dplyr); library(rvest); library(stringr)
 source("https://www.dropbox.com/s/4tubw8e5h3cem6w/theEconomist.R?dl=1")
 
 "https://www.economist.com/the-world-this-week/2019/11/21/politics-this-week" %>%
   get_theWorldThisWeek() -> df_politics
-
-"https://www.economist.com/the-world-this-week/2019/11/21/business-this-week" %>%
-  get_theWorldThisWeek() -> df_business
-```
-
-
-```{r}
 graphData <-list()
 graphData$df_politics <- df_politics
 countries<-c("America","South Korea","Britain","BurkinaFaso","Mali","Niger","Chile","Syria","Iran","Israel","Belarus","HongKong","Sweden","SriLanka","Bolivia","Brazil","Afghanistan")
@@ -41,9 +33,6 @@ values <-rnorm(17)
 map<-cbind(countries,values)
 map<-as.data.frame(map)
 graphData$map <-map
-```
-
-```{r}
 world <- map_data('world')
 world <- world %>% filter(region != "Antarctica")
 graphData$map %>%
@@ -58,10 +47,26 @@ theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.line.x=element_blank(),
-      legend.position = "none")
+       axis.line.y=element_blank(),
+      axis.text.y=element_blank(),
+      axis.title.y=element_blank(),
+      legend.position = "none")->worldgraph
+worldgraph%>%plotly()
+
 ```
+</div>
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### News this week
 
 ```{r}
-recommendation <- read.csv('https://raw.githubusercontent.com/amrrs/sample_revenue_dashboard_shiny/master/recommendation.csv',stringsAsFactors = F,header=T)
-head(recommendation)
+
 ```
+
+### Politics in the country 
+
+```{r}
+
+```
+

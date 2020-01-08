@@ -1,0 +1,89 @@
+---
+title: "410573076經濟四陳盈蓁_作業08"
+author: "陳盈蓁"
+date: "2019/12/29"
+output: html_document
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(shiny);library(shinydashboard);library(ggplot2);library(dplyr); library(stringr); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf);library(maps);library(ggthemes)
+
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+## Inputs and Outputs
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+```{r}
+graphData<-list()
+ufo_data_poster <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_poster.csv")
+ufo_data_facebook <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_facebook.csv")
+ufo_data_website <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_website.csv")
+graphData$poster<-ufo_data_poster
+graphData$facebook<-ufo_data_facebook
+graphData$website<-ufo_data_website
+```
+
+```{r}
+library(shiny);
+library(shinydashboard)
+ui <- dashboardPage(skin="yellow",
+                    dashboardHeader(title = "UFO Dashboard",titleWidth = 300 ),
+                    dashboardSidebar(),
+                    dashboardBody(  fluidRow(   
+                        box(title = "Select the date", status = "primary",solidHeader = TRUE,collapsible = TRUE,
+                        mutiple=TRUE,selectInput("date","Timestamp:",choices=unique(graphData$poster$timestamp))  ))
+                      ) )
+          
+server <- function(input, output) { }
+shinyApp(ui, server)
+```
+
+
+
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+
+
+
+

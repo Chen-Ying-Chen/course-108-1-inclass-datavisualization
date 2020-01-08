@@ -43,23 +43,12 @@ download.file("https://github.com/tim8537099/course-108-1-inclass-datavisualizat
 
 file.edit("1211/tet.Rmd")
 ```
-
 ```{r}
 load("plot_us.Rda")
 plot_us
 gridSVG::grid.export("plot1.svg",addClasses=TRUE)
 ```
-##Create a New Project
-```{r}
-webapp_project_create(
-  dirlib = "./1211/webapp",
-  overwrite = T
-)
-```
 
 ```{r}
-download.file("https://www.dropbox.com/s/99tfecfkblpsij8/getSVGelement.zip?dl=1",
-              destfile = "getSVGelement.zip")
-unzip("getSVGelement.zip")
 ```
 

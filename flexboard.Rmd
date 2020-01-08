@@ -20,47 +20,35 @@ Column {data-width=650}
 ### Chart A
 
 ```{r}
-graphData<-list()
-graphData$修課年級<-c("大一","大一","大一","大一","大一","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大二","大三","大三","大三","大三","大三","大三","大三","大三","大四上","大四上","大四上")
-graphData$課程類別<-c("語文","語文","人文思考","政治社會","人文思考","語文","財金管理","政治社會","政治社會","財金管理","政治社會","政治社會","人文思考","人文思考","人文思考","人文思考","人文思考","數理邏輯","程式科技","程式科技","人文思考","數理邏輯","人文思考","程式科技","人文思考","數理邏輯","數理邏輯","程式科技")
-graphData <- as.data.frame(graphData)
-save(graphData,file="graphData.Rda")
+source("https://www.dropbox.com/s/4tubw8e5h3cem6w/theEconomist.R?dl=1")
 
-# load("graphData.Rda") # 此行為第一行
-load("graphData.Rda")
-graphData%>%
-  ggplot(aes(x=factor(修課年級,level=c("大一","大二","大三","大四上"))))+
-  geom_bar(aes(fill=課程類別))+
-  scale_fill_manual(values=c("#F3DF6C", "#78B7C5", "#D3DDDC", "#C7B19C","#CC6666","#D67236"))+
-  labs(y="課程數",
-         title="大學自選課程地圖",
-       subtitle = "外系選修、系上選修、通識")+
-  annotate("text", x = 1, y = -0.5, 
-           label = paste("大一"), size = 3)+
-  annotate("text", x = 2, y = -0.5, 
-           label = paste("大二"), size = 3)+
-  annotate("text", x = 3, y = -0.5, 
-           label = paste("大三"), size = 3)+
-  annotate("text", x = 4, y = -0.5, 
-           label = paste("大四上"), size = 3)+
-  annotate("text", x = 2, y = 2, 
-           label = paste("政治社會"), size = 3)+
-  annotate("text", x = 2, y = 4.5, 
-           label = paste("語文"), size = 3)+
-  annotate("text", x = 2, y = 7.5, 
-           label = paste("人文思考"), size = 3)+
-  annotate("text", x = 2, y = 11, 
-           label = paste("財金管理"), size = 3)+
-  annotate("text", x = 3, y = 1, 
-           label = paste("數理邏輯"), size = 3)+
-  annotate("text", x = 3, y = 6.5, 
-           label = paste("程式科技"), size = 3)+
+"https://www.economist.com/the-world-this-week/2019/11/21/politics-this-week" %>%
+  get_theWorldThisWeek() -> df_politics
+graphData <-list()
+graphData$df_politics <- df_politics
+countries<-c("America","South Korea","Britain","BurkinaFaso","Mali","Niger","Chile","Syria","Iran","Israel","Belarus","HongKong","Sweden","SriLanka","Bolivia","Brazil","Afghanistan")
+values <-rnorm(17)
+map<-cbind(countries,values)
+map<-as.data.frame(map)
+graphData$map <-map
+world <- map_data('world')
+world <- world %>% filter(region != "Antarctica")
+graphData$map %>%
+  ggplot()+
+  geom_map(data=world, map=world,
+                  aes(x=long, y=lat, group=group, map_id=region),
+                  fill="white", colour="black") + 
+  geom_map(data=graphData$map, map=world,
+                  aes(fill=countries, map_id=countries),
+                  colour="black")+
 theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.line.x=element_blank(),
-      legend.position = "none")->finalplot
-finalplot
+       axis.line.y=element_blank(),
+      axis.text.y=element_blank(),
+      legend.position = "none")->worldgraph
+worldgraph
 ```
 
 Column {data-width=350}

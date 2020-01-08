@@ -26,7 +26,7 @@ Column {data-width=650}
 
 ### Chart A
 
-```{r graph, echo=T, eval=T}
+```{r graph, echo=T, eval=F}
 load("pltly_hw5_004_v1.Rda")
 pltly_hw5_004_v1
 ```

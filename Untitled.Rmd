@@ -1,0 +1,84 @@
+---
+title: "Personal Practice"
+output: html_notebook
+---
+
+```{r basic setup, message=FALSE, echo=TRUE, eval=T}
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf)
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+```
+
+```{r}
+ggplot()+theme_linedraw()+
+  scale_x_continuous(limits=c(0,6),breaks=0:6,
+                     expand=expand_scale(add=c(0,0)))+
+  scale_y_continuous(limits=c(0,6),breaks=0:6,
+                     expand=expand_scale(mult = c(0,0))) ->
+  myGrids
+
+myGrids
+```
+
+
+
+```{r}
+list_geometryData <- list()
+list_geometryData$points <- 
+  rbind(
+    c(1,5),
+    c(2,1),
+    c(5,1),
+    c(5,5)) 
+```
+
+
+```{r}
+list_geometryData$points %>%
+  as.data.frame() 
+```
+
+```{r}
+list_graphs<-list()
+
+myGrids +
+  geom_point(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$point
+
+myGrids +
+  geom_path(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$path
+
+myGrids +
+  geom_polygon(
+    data=as.data.frame(list_geometryData$points),
+    aes(x=V1,y=V2)
+  ) -> list_graphs$polygon
+
+ggpubr::ggarrange(
+  list_graphs$point, list_graphs$path, list_graphs$polygon,
+  ncol=3
+)
+```
+
+```{r}
+library(readr)
+df_geo_northTW <- read_csv("https://www.dropbox.com/s/6uljw24zkyj7avs/df_geo_northTW.csv?dl=1")
+```
+
+
+```{r}
+list_graphs$polygon
+```
+
+```{r}
+
+```
+

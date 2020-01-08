@@ -1,0 +1,51 @@
+---
+title: "UFODashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard);library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext); library(colorspace); library(scales); library(magick); library(sf); library(rmapshaper); library(osmdata)
+graphData<-list()
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+### Facebook
+
+```{r}
+ufo_data_facebook <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_facebook.csv")
+graphData$facebook<-ufo_data_facebook
+graphData$facebook%>%
+  ggplot()+
+  geom_violin(
+    
+  )
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+
+### Website
+
+```{r}
+ufo_data_website <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_website.csv")
+graphData$website<-ufo_data_website
+
+```
+
+
+### Poster
+
+```{r}
+ufo_data_poster <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_poster.csv")
+graphData$poster<-ufo_data_poster
+
+```
