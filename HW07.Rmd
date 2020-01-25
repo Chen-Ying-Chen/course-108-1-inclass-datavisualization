@@ -35,7 +35,6 @@ source("https://www.dropbox.com/s/4tubw8e5h3cem6w/theEconomist.R?dl=1")
 
 ```{r}
 graphData <-list()
-graphData$df_politics <- df_politics
 countries<-c("America","South Korea","Britain","BurkinaFaso","Mali","Niger","Chile","Syria","Iran","Israel","Belarus","HongKong","Sweden","SriLanka","Bolivia","Brazil","Afghanistan")
 values <-rnorm(17)
 map<-cbind(countries,values)
@@ -50,18 +49,45 @@ graphData$map %>%
   ggplot()+
   geom_map(data=world, map=world,
                   aes(x=long, y=lat, group=group, map_id=region),
-                  fill="white", colour="black") + 
+                  fill="black", colour="grey70") + 
   geom_map(data=graphData$map, map=world,
                   aes(fill=countries, map_id=countries),
                   colour="black")+
-theme(axis.title.x=element_blank(),
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
         axis.ticks.x=element_blank(),
         axis.line.x=element_blank(),
-      legend.position = "none")
+      axis.title.y=element_blank(),
+       axis.text.y=element_blank(),
+      axis.ticks.y=element_blank(),
+      axis.line.y=element_blank(),
+      legend.position = "none")-> mapgraph
+mapgraph
 ```
 
 ```{r}
-recommendation <- read.csv('https://raw.githubusercontent.com/amrrs/sample_revenue_dashboard_shiny/master/recommendation.csv',stringsAsFactors = F,header=T)
-head(recommendation)
+library(leaflet)
+m <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=80.6356, lat=7.2955, popup="Sri Lanka Election")%>%
+  addMarkers(lng=114.15846, lat=22.28299, popup="Hong Kong Protest")%>%
+  addMarkers(lng=-77.03637, lat=38.89511, popup="America's interactions with South Korea and Hong Kong")%>%
+  addMarkers(lng=-74.00597, lat=40.71427, popup="America’s ambassador to the eu and the star witness in the impeachment inquiry into Donald Trump")%>%
+  addMarkers(lng=32.65246, lat=51.67462, popup="Large protests erupted in Iran after the government increased the price of heavily subsidised fuel")%>%
+  addMarkers(lng=35.21633, lat=31.76904, popup="Israeli settlements are consistent with international law")%>%
+  addMarkers(lng=36.29128, lat=33.5102, popup="Israel carried out air strikes in Syria")%>%
+  addMarkers(lng=-2.36272, lat=12.25263, popup="Burkina Faso humanitarian crisis")%>%
+  addMarkers(lng=-5.46421, lat=12.39173, popup="Mali humanitarian crisis")%>%
+  addMarkers(lng=7.10174, lat=13.5, popup="Niger humanitarian crisis")%>%
+  addMarkers(lng=-38.54306, lat=-3.71722, popup="The pace of deforestation of the Brazilian Amazon is faster than before")%>%
+  addMarkers(lng=-70.57577, lat=-33.61169, popup="Chile’s government agreed to hold a referendum")%>%
+  addMarkers(lng=-67.15, lat=-17.98333, popup="death toll in Bolivia")%>%
+  addMarkers(lng=-0.09184, lat=51.51279, popup="Britain’s two main party leaders clashed in the first televised election debate. ")%>%
+  addMarkers(lng=23.8258, lat=53.6884, popup="Parliamentary elections consequences in Belarus")
+  
+  
+  
+  
+m  # Print the map
 ```

@@ -1,0 +1,56 @@
+---
+title: "The Economists Weekly News- Politcis"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr); library(stringr); library(ggplot2); library(plotly); library(lubridate); library(readr); library(tidyr); library(showtext);library(sf);library(maps);library(tidyverse);library(proj4);library(magick);library(ggimage)
+
+
+
+
+font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
+showtext_auto(enable=TRUE) #啟用字體
+theme_set(theme_classic())
+knitr::opts_chunk$set(out.width='80%', fig.asp=.75, fig.align='center', fig.showtext=T)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Briefly World News
+
+```{r}
+library(leaflet)
+m <- leaflet() %>%
+  addTiles() %>%  # Add default OpenStreetMap map tiles
+  addMarkers(lng=80.6356, lat=7.2955, popup="Sri Lanka Election")%>%
+  addCircleMarkers(lng=114.15846, lat=22.28299, popup="Police shot rubber bullets at the protesters occupying Hong Kong Polytechnic University.",color = "red")%>%
+  addMarkers(lng=-118.24368, lat=34.05223, popup="America walked out of talks in Seoul with South Korea in a dispute about paying for American troops stationed in the country.")%>%
+    addMarkers(lng=-122.41942, lat=37.77493, popup="The American Congress passed the Hong Kong Freedom and Democracy bill.")%>%
+  addMarkers(lng=-74.00597, lat=40.71427, popup="America’s ambassador to the eu and the star witness in the impeachment inquiry into Donald Trump")%>%
+  addCircleMarkers(lng=32.65246, lat=51.67462, popup="Large protests erupted in Iran after the government increased the price of heavily subsidised fuel",color = "red")%>%
+  addMarkers(lng=35.21633, lat=31.76904, popup="Israeli settlements are consistent with international law")%>%
+  addCircleMarkers(lng=36.29128, lat=33.5102, popup="Israel carried out air strikes in Syria",color = "red")%>%
+  addCircleMarkers(lng=-2.36272, lat=12.25263, popup="Burkina Faso have created a humanitarian crisis, more than half a million people have fled their homes",color = "red")%>%
+  addCircleMarkers(lng=-5.46421, lat=12.39173, popup="Mali have created a humanitarian crisis",color = "red")%>%
+  addCircleMarkers(lng=7.10174, lat=13.5, popup="Niger have created a humanitarian crisis",color = "red")%>%
+  addCircleMarkers(lng=-38.54306, lat=-3.71722, popup="The pace of deforestation of the Brazilian Amazon is faster than before",color = "green")%>%
+  addMarkers(lng=-70.57577, lat=-33.61169, popup="Chile’s government agreed to hold a referendum")%>%
+  addCircleMarkers(lng=-67.15, lat=-17.98333, popup="The death toll in the unrest leading up to and after Evo Morales’s resignation as Bolivia’s president rose to at least 32 people.",color = "red")%>%
+  addMarkers(lng=-0.09184, lat=51.51279, popup="Britain’s two main party leaders clashed in the first televised election debate. ")%>%
+  addMarkers(lng=23.8258, lat=53.6884, popup="Parliamentary elections were held in Belarus, the former Soviet republic whose president, Alexander Lukashenko, has been in uncontested power for the past 25 years. The opposition won no seats at all.")
+  
+  
+  
+  
+m  # Print the map
+
+```
+
+
+

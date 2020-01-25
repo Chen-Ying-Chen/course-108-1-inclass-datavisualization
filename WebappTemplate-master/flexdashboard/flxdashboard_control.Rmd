@@ -1,0 +1,112 @@
+---
+title: "學生資訊系統"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    css: null
+    includes:
+      in_header: ["external/in_header/header.html"]
+      before_body: ["external/before_body/before_body.html"]
+      after_body: ["external/after_body/after_body.html"]
+params:
+  output_filename: "flxdashboard_control.html"
+---
+
+```{r local serve, eval=F, echo=F}
+servr::daemon_stop(
+  which=servr::daemon_list()
+)
+servr::httd(dir=".",port=8000,initpath=params$output_filename)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message=F, warning=F)
+library(flexdashboard);library(dplyr)
+library(widgetframe)
+source("./R/support.R")
+library(dplyr); library(ggplot2); library(plotly); library(widgetframe);library(stringr)
+```
+
+控制台 {.sidebar}
+------------------------
+
+### 個人資訊
+
+ <div id="example" width="100%" height="100%"></div>
+<script type="text/javascript" src="https://pym.nprapps.org/pym.v1.min.js"></script>
+<script>
+    var pymParent = new pym.Parent("example", "./bsHTML/bsHTML_flxdb.html", {});
+</script>
+
+```{r, eval=F, echo=FALSE}
+"./bsHTML/bsHTML_flxdb.html" %>%
+  to_frameableHTML(regularHTML = T) # 非htmlwidget要設T
+```
+
+
+Row 
+-------------------------------------
+
+### 歷年成績
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+學年<-c(100,100,101,101,102,102,103,103)
+semester<-c("1001","1002","1011","1012","1021","1023","1031","1032")
+coursecredits<-c(20,20,18,20,21,22,15,13)
+AverageGrades<-c(66.05,64.85,66.17,67.8,68.57,71.14,73.47,77.62)
+grades_statistics<-data.frame(學年,semester,coursecredits,AverageGrades)
+grades_statistics%>%
+  ggplot()+
+  geom_point(aes(x=semester,y=AverageGrades),color="#FF8000")+
+  geom_path(aes(x=semester,y=AverageGrades))+
+geom_bar(aes(x=semester,y=coursecredits,fill=學年),stat = "identity")->q
+plotly_1<-ggplotly(q)
+plotly_1
+```
+
+Row {.tabset .tabset-fade}
+-------------------------------------
+###  成績分佈
+<iframe
+  src = "mtHTML/mtHTML_plotly.html"
+  scrolling = "no" 
+  seamless = "seamless"
+  frameBorder = "0"
+  width="100%"
+  height="100%"></iframe>
+
+
+
+
+
+###  巨量資料探勘學士學分學程進度
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+CourseName<-c("Computer Programming","Data Mining","Linear Algebra","Statistics","Regression Analysis","Big Data Analysis","Introduction to Cloud Computing","Data Structures","Multivariate Statistics","Categorical Data Analysis","Introduction to Pattern Recognition","High Dimensional Data Analysis","Data Structure","Algorithms","Categorical Data Analysis")
+CourseCategory<-c("compulsory","compulsory","compulsory","compulsory","compulsory","compulsory","elective","elective","elective","elective","elective","elective","elective","elective","elective")
+Coursedoneornot<-c("done","done","done","done","not yet","not yet","not yet","not yet","done","not yet","not yet","not yet","not yet","not yet","not yet")
+CourseCredits<-c(3,3,3,6,3,3,3,3,3,3,3,3,3,3,3)
+
+Course<-data.frame(CourseName,CourseCategory,Coursedoneornot,CourseCredits)
+
+p <- ggplot(data=Course, aes(x=CourseName, y=CourseCredits, fill=Coursedoneornot)) +
+    geom_bar(colour="black", stat="identity",
+             position=position_dodge(),
+             size=.3) +                        # Thinner lines
+    xlab("Course Nmae") + ylab("Course Credits")+ # Set axis labels
+    ggtitle("巨量資料探勘學士學分學程進度") +
+    theme(legend.title = element_blank())# Set title
+p <-p+coord_flip()
+p <-ggplotly(p)
+p
+
+```
+
+

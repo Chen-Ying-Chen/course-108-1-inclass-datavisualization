@@ -1,9 +1,7 @@
 ---
 title: "UFODashboard"
 output: 
-  flexdashboard::flex_dashboard:
-    orientation: columns
-    vertical_layout: fill
+  flexdashboard::flex_dashboard
 ---
 
 ```{r setup, include=FALSE}
@@ -14,38 +12,227 @@ font_add("QYuan","cwTeXQYuan-Medium.ttf") # 新增字體
 showtext_auto(enable=TRUE) #啟用字體
 ```
 
+青銀共賞電影
+=====================================  
 
-Column {data-width=650}
------------------------------------------------------------------------
-### Facebook
-
-```{r}
-ufo_data_facebook <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_facebook.csv")
-graphData$facebook<-ufo_data_facebook
-graphData$facebook%>%
-  ggplot()+
-  geom_violin(
+Column{.tabset .tabset-fade}
+-------------------------------------
     
-  )
-```
-
-Column {data-width=350}
------------------------------------------------------------------------
-
-
-### Website
+###  FB_Visit
 
 ```{r}
-ufo_data_website <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_website.csv")
-graphData$website<-ufo_data_website
-
+library(xts)
+library(dygraphs)
+ufo_data_facebook <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_facebook.csv")
+fb_date_teenelder<-c("2019-11-03","2019-11-04","2019-11-6","2019-11-7","2019-11-8")
+fb_date_teenelder<-as.Date(fb_date_teenelder,tz="UTC")
+fb_teenelder<-as.xts(ts(start = fb_date_teenelder[1], end=fb_date_teenelder[5],
+  data = c(6,2,4,3,1)))
+dygraph(fb_teenelder,main="青銀共賞電影FB點擊次數")
+```
+   
+###  FB_Gender
+```{r}
+ufo_data_facebook%>%
+  filter(event.title=="青銀共賞電影")->ufo_data_facebook_teenelder
+ufo_data_facebook_teenelder%>%
+  ggplot()+
+  geom_bar(aes(x=gender,fill=gender))+
+  annotate("text", x = 1, y =11, 
+           label = paste("Female 11"), size = 5)+
+    annotate("text", x = 2, y =5, 
+           label = paste("Male 5"), size = 5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y=element_blank(),
+      legend.position = "none",
+      panel.background = element_blank())+
+  labs(title="青銀共賞電影FB點擊性別分布")->ufo_data_facebook_teenelder_gender
+ufo_data_facebook_teenelder_gender
 ```
 
+### FB_Browsing
+```{r}
+library(Hmisc)
+ufo_data_facebook%>%
+  filter(event.title=="青銀共賞電影")->ufo_data_facebook_teenelder
+data_summary <- function(x) {
+   m <- mean(x)
+   ymin <- m-sd(x)
+   ymax <- m+sd(x)
+   return(c(y=m,ymin=ymin,ymax=ymax))
+}
+ufo_data_facebook_teenelder%>%
+  ggplot(aes(x=fans,y=Browsing.time..in.seconds.))+
+  geom_violin(aes(x=fans,y=Browsing.time..in.seconds.,color=fans))+
+  geom_boxplot(aes(x=fans,y=Browsing.time..in.seconds.),width=0.1)+
+stat_summary(fun.data=data_summary)+
+  annotate("text", x = 0.7, y =100, 
+           label = paste("Mean 99.78"), size = 5,color="saddlebrown")+
+    annotate("text", x = 1.7, y =98, 
+           label = paste("Mean 96.57"), size = 5,color="darkolivegreen")+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+
+  labs(title="青銀共賞電影瀏覽時間分布(FROM FB)")->ufo_data_facebook_teenelder_browsing
+ufo_data_facebook_teenelder_browsing
+```
 
-### Poster
-
+###  Poster_Visit
 ```{r}
 ufo_data_poster <- read.csv("~/Documents/GitHub/course-108-1-inclass-datavisualization/shiny/ufo_data_poster.csv")
-graphData$poster<-ufo_data_poster
+library(xts)
+library(dygraphs)
+poster_date_teenelder<-c("2019-11-03","2019-11-04")
+poster_date_teenelder<-as.Date(poster_date_teenelder)
+poster_teenelder<-as.xts(ts(start = poster_date_teenelder[1],end = poster_date_teenelder[2]))
+```
+
+```{r, eval=F, echo=FALSE}
+"./bsHTML/bsHTML_flxdb.html" %>%
+  to_frameableHTML(regularHTML = T) # 非htmlwidget要設T
+```
+北大玩具節
+=====================================  
+
+Column{.tabset .tabset-fade}
+-------------------------------------
+###  FB_Visit
+
+```{r}
+library(xts)
+library(dygraphs)
+fb_date_toy<-c("2019-11-18","2019-11-19","2019-11-20","2019-11-21","2019-11-22","2019-11-23","2019-11-27")
+fb_date_toy<-as.Date(fb_date_toy,tz="UTC")
+fb_toy<-as.xts(ts(start = fb_date_toy[1], end=fb_date_toy[7],data = c(2,6,4,3,10,5,4)))
+dygraph(fb_toy,main="北大玩具節FB點擊次數") 
+```
+
+###  FB_Gender
+```{r}
+ufo_data_facebook%>%
+  filter(event.title=="北大玩具節")->ufo_data_facebook_toy
+ufo_data_facebook_toy%>%
+  ggplot()+
+  geom_bar(aes(x=gender,fill=gender))+
+  annotate("text", x = 1, y =11, 
+           label = paste("Female 11"), size = 5)+
+    annotate("text", x = 2, y =23, 
+           label = paste("Male 23"), size = 5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y=element_blank(),
+      legend.position = "none",
+      panel.background = element_blank())+
+  labs(title = "北大玩具節FB點擊性別分布")->ufo_data_facebook_toy_gender
+ufo_data_facebook_toy_gender
 
 ```
+
+### FB_Browsing
+```{r}
+library(Hmisc)
+data_summary <- function(x) {
+   m <- mean(x)
+   ymin <- m-sd(x)
+   ymax <- m+sd(x)
+   return(c(y=m,ymin=ymin,ymax=ymax))
+}
+ufo_data_facebook%>%
+  filter(event.title=="北大玩具節")->ufo_data_facebook_toy
+ufo_data_facebook_toy%>%
+  ggplot(aes(x=fans,y=Browsing.time..in.seconds.))+
+  geom_violin(aes(x=fans,y=Browsing.time..in.seconds.,color=fans))+
+  geom_boxplot(aes(x=fans,y=Browsing.time..in.seconds.),width=0.1)+
+stat_summary(fun.data=data_summary)+
+  annotate("text", x = 0.7, y =45.11, 
+           label = paste("Mean 45.11 "), size = 5,color="saddlebrown")+
+    annotate("text", x = 1.7, y =69.6, 
+           label = paste("Mean 69.6"), size = 5,color="darkolivegreen")+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+
+  labs(title = "北大玩具節FB瀏覽時間分布(FROM FB)")->ufo_data_facebook_toy_browsing
+ufo_data_facebook_toy_browsing
+```
+
+
+
+聖誕點燈暨北大管樂節
+=====================================  
+
+Column{.tabset .tabset-fade}
+-------------------------------------
+###  FB_Visit
+```{r}
+library(xts)
+library(dygraphs)
+fb_date_chris<-c("2019-12-16","2019-12-17")
+fb_date_chris<-as.Date(fb_date_chris,tz="UTC")
+fb_chris<-as.xts(ts(start = fb_date_chris[1], end=fb_date_chris[2],data = c(3,9)))
+dygraph(fb_chris,main="聖誕點燈暨北大管樂節") 
+```
+
+###  FB_Gender
+```{r}
+ufo_data_facebook%>%
+  filter(event.title=="聖誕點燈暨北大管樂節")->ufo_data_facebook_chris
+
+ufo_data_facebook_chris%>%
+  ggplot()+
+  geom_bar(aes(x=gender,fill=gender))+
+  annotate("text", x = 1, y =6, 
+           label = paste("Female 6"), size = 5)+
+    annotate("text", x = 2, y =6, 
+           label = paste("Male 6"), size = 5)+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        axis.line.y=element_blank(),
+      legend.position = "none",
+      panel.background = element_blank())+
+  labs(title = "聖誕點燈暨北大管樂節FB點擊性別分布")->ufo_data_facebook_chris_gender
+ufo_data_facebook_chris_gender
+
+```
+
+### FB_Browsing
+```{r}
+library(Hmisc)
+data_summary <- function(x) {
+   m <- mean(x)
+   ymin <- m-sd(x)
+   ymax <- m+sd(x)
+   return(c(y=m,ymin=ymin,ymax=ymax))
+}
+ufo_data_facebook_chris%>%
+  ggplot(aes(x=fans,y=Browsing.time..in.seconds.))+
+  geom_violin(aes(x=fans,y=Browsing.time..in.seconds.,color=fans))+
+  geom_boxplot(aes(x=fans,y=Browsing.time..in.seconds.),width=0.1)+
+stat_summary(fun.data=data_summary)+
+  annotate("text", x = 0.7, y =42.71, 
+           label = paste("Mean 42.71 "), size = 5,color="saddlebrown")+
+    annotate("text", x = 1.7, y =45.2, 
+           label = paste("Mean 45.2"), size = 5,color="darkolivegreen")+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())+
+  labs(title = "聖誕點燈暨北大管樂節FB瀏覽時間分布(FROM FB)")->ufo_data_facebook_chris_browsing
+ufo_data_facebook_chris_browsing
+```
+
+

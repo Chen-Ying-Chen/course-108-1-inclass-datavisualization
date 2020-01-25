@@ -1,0 +1,80 @@
+---
+output: 
+  html_document:
+    theme: null
+    highlight: null
+    mathjax: null
+    self_contained: false
+    includes:
+      in_header: "external/in_header/header.html"
+      before_body: "external/before_body/before_body.html"
+      after_body: "external/after_body/after_body.html"
+params:
+  output_filename: "mtHTML_plotly.html"
+---
+
+```{r local serve, eval=F, echo=F}
+servr::daemon_stop(
+  which=servr::daemon_list()
+)
+servr::httd(dir=".",port=8000,initpath=params$output_filename)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = F, message=F, warning=F)
+library(dplyr); library(ggplot2); library(plotly); library(widgetframe);library(stringr)
+source("https://www.dropbox.com/s/mdx4777ugnluspz/webApplications.R?dl=1")
+```
+
+<div style="position: relative;">
+
+<!--1. mtHTML_plotly.Rmd: 手動執行plotly widget轉frameable html-->
+```{r, eval=F, echo=F}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+gradeData%>%filter(系級=="統計學系1"|系級=="統計學系2"|系級=="統計學系3"|系級=="統計學系4")->gradeData_Statistics
+gradeData_Statistics$學期成績->grades
+gradeData_Statistics$科目名稱->classname
+gradeData_Statistics$學年->academicyear
+data.frame(grades,classname,academicyear)->gradeData_Statistics_plotly
+gradeData_Statistics_plotly%>%
+  ggplot( aes(x = academicyear, y = grades,fill=classname))+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.line.x=element_blank(),
+          legend.position = "none",
+          legend.title = element_blank())+
+     geom_point() + geom_smooth()->p
+
+pltly_p0<-ggplotly(p)
+pltly_p0
+
+
+
+# 將plotly htmlwidget存成html檔
+htmlwidgets::saveWidget(frameableWidget(pltly_p0),'pltly_p0.html')
+
+# 加工使html在iframe時有responsive
+"pltly_p0.html" %>%
+  to_frameableHTML(regularHTML = T) # plotly htmlwidget要
+
+```
+
+<!--2. mtHTML_plotly.Rmd: 貼上to_frameableHTML的提示-->
+<div id="example" width="100%" height="100%"></div>
+<script type="text/javascript" src="https://pym.nprapps.org/pym.v1.min.js"></script>
+<script>
+    var pymParent = new pym.Parent("example", "pltly_p0.html", {});
+</script>
+
+<!--此處為Materialize framework的浮鈕功能--> 
+
+
+
+<!--3. knit mtHTML_plotly.Rmd --> 
+
+<div>
+
+
